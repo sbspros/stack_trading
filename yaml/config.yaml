@@ -1,0 +1,15 @@
+AppInfo:
+  version: 1.0
+  appName: "Grid Trading"
+  status:  "Init Dev"  
+
+Logging:
+  fileName: "logs/logfile.log"
+  logLevel: 40
+
+SymbolName:
+  - "SOLUSDT"
+  - "ADAUSDT"
+
+DataBase:
+  Schema: "db/stack_trading.db"
