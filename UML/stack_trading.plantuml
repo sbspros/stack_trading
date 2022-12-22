@@ -1,0 +1,130 @@
+@startuml
+!theme lightgray
+
+' This is a class diagram for Stack Training
+'   It is a trading strategy I am designing
+
+
+' Common Class
+class BaseClass{
+}
+BaseClass -- Logging
+BaseClass -- StackTradingConfig
+
+
+class Logging{
+
+}
+
+class StackTradingConfig{
+
+}
+
+
+
+' ##These are the external connectors
+
+' ## Connector to Binance API
+class BinanceConnection{
+    client
+    init(BaseClass)None
+}
+BinanceConnection -- BaseClass
+BinanceTicker -- BinanceConnection
+
+' ##Connector for a Sqlite database
+' conn is a connector to a database
+class SqlConnector{
+ 
+    -conn 
+    init(BaseClass,str)None
+}
+SqlConnector -- BaseClass
+
+
+
+
+
+
+
+
+
+
+
+class Ticker{
+   _symbol:str
+    _open_time:int
+    _open_price:str
+    _close_price:str
+    _high_price:str
+    _low_price:str
+    _ticker_time_stamp:str
+    _volume:str
+    _close_time:int
+    _quote_asset_volume:str
+    _taker_buy_base:str
+    _taker_buy_asset:str
+    _useded:str
+    _loaded:bool
+
+price_check(self,price:float):
+}
+
+class BinanceTicker{
+
+}
+BinanceTicker -- Ticker
+BinanceTicker -- BaseClass
+
+
+
+
+class Orders{
+symbol:str
+    _client_order_id:str
+    _order_id:str
+    _orig_qty:str
+    _price:str
+    _side:str
+    _status:str
+    _buy_price:str="0.0000"
+    _sell_price:str="0.0000"
+    _profit:str="0.0000"
+    _table_name:str='Orders'
+    _order_list_id:int
+    _execute_qty:str
+    _cummulative_quote_qyt:str
+    _time_in_force:str
+    _order_type:str
+    _stop_price:str
+    _iceberg_qty:str
+    _order_time:int
+    _update_time:int
+    _is_working:bool
+    _orig_quote_order_qty:str
+}
+
+class SqlOrder{
++select_price_range()
+}
+
+interface SqlTable{
++create_table()
++update()
++delete()
++insert()
++select()
++in_database()
+}
+
+class LoadBinanaceOrders{
+__init__(BassClass)None
+}
+
+LoadBinanaceOrders -- BaseClass
+
+SqlOrder<|-- Orders
+SqlTable -- SqlOrder
+
+
+@enduml
