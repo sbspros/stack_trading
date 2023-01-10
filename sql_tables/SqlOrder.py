@@ -1,6 +1,8 @@
 from common.BaseClass import BaseClass
 from sql_tables.SqlTable import SqlTable,SQLCreateError,SqlSelectError,SqlInsertError 
+from datetime import datetime 
 import traceback
+
 
 __author__ = "Richard Chamberlain"
 __copyright__ = "Copyright 2022"
@@ -23,7 +25,9 @@ class SqlOrder(SqlTable):
                 orig_qty text NOT NULL,\
                 price float NOT NULL,\
                 side text NOT NULL,\
-                status text NOT NULL\
+                status text NOT NULL,\
+                creatation_date INT,\
+                modification_date INT\
                     ); ".format(table_name=self._table_name)
             conn.execute(sql_create_table)
             SqlOrder.table_exists=True
@@ -31,30 +35,73 @@ class SqlOrder(SqlTable):
             bc.log.error("\t"+":"+traceback.format_exc())
             raise SQLCreateError
 
-    def update():
-        pass
+    def trunc(self,bc,conn):
+
+        try:
+            sql_select = "DELETE FROM {table_name} \
+                    ; ".format(table_name=self._table_name)
+            conn.execute(sql_select)
+            cursor = conn.execute(sql_select)
+            return cursor.fetchone()
+        except:
+            bc.log.error("\t"+":"+traceback.format_exc())
+            raise SqlSelectError  
+
+
+    def drop(self,bc,conn):
+
+        try:
+            sql_drop = "DROP TABLE IF EXISTS {table_name} \
+                    ; ".format(table_name=self._table_name)
+            bc.log.error(sql_drop)
+            conn.execute(sql_drop)
+            cursor = conn.execute(sql_drop)
+            return cursor.fetchone()
+        except:
+            bc.log.error("\t"+":"+traceback.format_exc())
+            raise SqlSelectError  
+
+
+    def update(self,bc:BaseClass,conn):
+        store_date=int(datetime.now().timestamp())
+        sql_update = "update {table_name} \
+            set status='{status}'\
+            where order_id={order_id};".format(\
+            table_name=self._table_name,\
+            status=self._status,\
+            order_id=self._order_id)
+        bc.log.error(sql_update)
+        conn.execute(sql_update)
+        conn.commit()
 
     def delete():
         pass
 
     def insert(self,bc,conn):
         try:
+            store_date=int(datetime.now().timestamp())
             sql_insert = "\
                 insert into {table_name} (\
                 symbol,client_order_id,\
                 order_id ,orig_qty,\
                 price,side,\
-                status) values(\
+                status,\
+                creatation_date,modification_date) values(\
                 '{symbol}',\
                 '{client_order_id}',\
                 '{order_id}' ,'{orig_qty}',\
                 '{price}','{side}',\
-                '{status}');".format(\
+                '{status}',\
+                {creatation_date},{modification_date}\
+                );".format(\
                 symbol=self._symbol,\
                 client_order_id=self._client_order_id,\
                 order_id=self._order_id ,orig_qty=self._orig_qty,\
                 price=float(self._price),side=self._side,\
-                status=self._status, table_name=self._table_name)
+                status=self._status, table_name=self._table_name,\
+                creatation_date=store_date,\
+                modification_date=store_date)
+            bc.log.error(sql_insert)
             conn.execute(sql_insert)
             conn.commit()
         except:
@@ -97,4 +144,4 @@ class SqlOrder(SqlTable):
             return cursor.fetchall()
         except:
             bc.log.error("\t"+":"+traceback.format_exc())
-            raise SqlSelectError     
+            raise SqlSelectError

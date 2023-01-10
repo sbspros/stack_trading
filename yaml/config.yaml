@@ -1,11 +1,11 @@
 AppInfo:
   version: 1.0
-  appName: "Grid Trading"
+  appName: "Stack Trading"
   status:  "Init Dev"  
 
 Logging:
   fileName: "logs/logfile.log"
-  logLevel: 40
+  logLevel: 20
 
 SymbolName:
   - "SOLUSDT"

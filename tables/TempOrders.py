@@ -5,20 +5,20 @@ from sql_tables.SqlOrder import SqlOrder
 import uuid
 
 @dataclass
-class Order(SqlOrder):
-    _symbol:str=field(init=False)
-    _client_order_id:str=field(init=False)
-    _order_id:str=field(init=False)
-    _orig_qty:str=field(init=False)
-    _price:str=field(init=False)
-    _side:str=field(init=False)
-    _status:str=field(init=False)
+class TempOrders(SqlOrder):
+    _symbol:str=field(init=False,default="")
+    _client_order_id:str=field(init=False,default="")
+    _order_id:str=field(init=False,default="")
+    _orig_qty:str=field(init=False,default="")
+    _price:str=field(init=False,default="")
+    _side:str=field(init=False,default="")
+    _status:str=field(init=False,default="")
     _buy_price:str="0.0000"
     _sell_price:str="0.0000"
     _profit:str="0.0000"
     _creatation_date:int=0
     _modification_date:int=0    
-    _table_name:str='orders'
+    _table_name:str='temp_orders'
     _order_list_id:int=field(init=False,repr=False)
     _execute_qty:str=field(init=False,repr=False)
     _cummulative_quote_qyt:str=field(init=False,repr=False)
@@ -32,7 +32,7 @@ class Order(SqlOrder):
     _orig_quote_order_qty:str=field(init=False,repr=False)
 
     def __eq__(self, other): 
-        if not isinstance(other, Order):
+        if not isinstance(other, TempOrders):
             # don't attempt to compare against unrelated types
             return NotImplemented
         return str(self._order_id) == str(other._order_id) \
@@ -88,11 +88,11 @@ class Order(SqlOrder):
     def side(self):
         return self._side
 
-    def bought(self,bc):
+    def bought(self,bc:BaseClass,conn:SqlConnector):
         bc.log.info("Order was bought")
 
     def sold(self,bc:BaseClass,conn:SqlConnector):
         self._status="Complete"
-        self.update()
+        self.update(bc,conn)
         bc.log.info("Order was sold")
         
